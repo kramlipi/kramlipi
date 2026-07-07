@@ -2,15 +2,15 @@
 # Build: mkdocs build   Serve: mkdocs serve
 
 site_name: Kramlipi Docs
-site_url: https://docs.kramlipi.dev/
+site_url: https://kramlipi.github.io/kramlipi/
 site_description: >-
   Documentation for Kramlipi open-source projects — AI coding agents,
   CI automation, and developer tooling.
 site_author: Kramlipi
 copyright: Copyright &copy; 2026 Kramlipi
 
-repo_name: kramlipi/kramlip-docs
-repo_url: https://github.com/kramlipi/kramlip-docs
+repo_name: kramlipi/kramlipi
+repo_url: https://github.com/kramlipi/kramlipi
 edit_uri: edit/main/docs/
 
 theme:

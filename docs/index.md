@@ -15,7 +15,7 @@ each product has its own section with quick-start commands, CLI reference, and g
 
 | Project | Description | Quick start |
 |---------|-------------|-------------|
-| [**Kramlipi AI Code Agent**](kramlipi-ai-code-agent/) | Headless coding CLI with CI, SRE, and monitoring experts | [Install & run →](kramlipi-ai-code-agent/quick-start/) |
+| [**Kramlipi AI Code Agent**](kramlipi-ai-code-agent/index.md) | Headless coding CLI with CI, SRE, and monitoring experts | [Install & run →](kramlipi-ai-code-agent/quick-start.md) |
 
 ## Search
 

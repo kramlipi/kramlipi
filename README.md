@@ -1,6 +1,6 @@
 # Kramlipi Docs
 
-Multi-project documentation hub built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).
+Multi-project  documentation hub built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).
 
 ## Projects
 
@@ -33,6 +33,29 @@ Open [http://127.0.0.1:8000](http://127.0.0.1:8000).
 mkdocs build
 # output: site/
 ```
+
+## Deploy to GitHub Pages
+
+This repo deploys automatically on every push to `main`.
+
+### One-time GitHub setup
+
+1. Open **https://github.com/kramlipi/kramlipi/settings/pages**
+2. Under **Build and deployment** → **Source**, choose **GitHub Actions**
+3. Push to `main` (or run the **Deploy documentation to GitHub Pages** workflow manually under Actions)
+
+### Live URL
+
+After the first successful deploy:
+
+**https://kramlipi.github.io/kramlipi/**
+
+### Custom domain (optional)
+
+1. Add a `CNAME` file in `docs/` with your domain (e.g. `docs.kramlipi.dev`)
+2. Update `site_url` in `mkdocs.yml` to match
+3. Configure DNS at your registrar (CNAME → `kramlipi.github.io`)
+4. Enable **Enforce HTTPS** in GitHub Pages settings
 
 ## Add a new project
 
