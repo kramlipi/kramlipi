@@ -1,0 +1,15 @@
+site_name: Kramlipi AI Code Agent
+site_description: >-
+  Kramlipi AI Code Agent — headless coding CLI with LangGraph, LiteLLM, and
+  automation experts for CI failures, test intelligence, deploy guard, SRE, and
+  monitoring.
+site_author: Kramlipi
+
+nav:
+  - Overview: index.md
+  - Quick Start: quick-start.md
+  - Commands: commands.md
+  - Experts: experts.md
+  - Recipes: recipes.md
+  - Coverage: coverage.md
+  - Troubleshooting: troubleshooting.md
