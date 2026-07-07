@@ -38,17 +38,43 @@ mkdocs build
 
 This repo deploys automatically on every push to `main`.
 
-### One-time GitHub setup
+### Why the URL was `/kramlipi/` (and how to fix it)
 
-1. Open **https://github.com/kramlipi/kramlipi/settings/pages**
-2. Under **Build and deployment** → **Source**, choose **GitHub Actions**
-3. Push to `main` (or run the **Deploy documentation to GitHub Pages** workflow manually under Actions)
+GitHub serves docs at the **repo root** only when the repository is named:
 
-### Live URL
+```text
+kramlipi.github.io
+```
 
-After the first successful deploy:
+| Repo name on GitHub | Public URL |
+|---------------------|------------|
+| `kramlipi` (project site) | `https://kramlipi.github.io/kramlipi/` |
+| `kramlipi.github.io` (org site) | `https://kramlipi.github.io/` |
 
-**https://kramlipi.github.io/kramlipi/**
+**One-time fix — rename the repo:**
+
+1. Open **https://github.com/kramlipi/kramlipi/settings**
+2. **Repository name** → change to `kramlipi.github.io` → **Rename**
+3. Update your local remote:
+
+   ```bash
+   cd ~/karm/kramlip-docs
+   git remote set-url origin https://github.com/kramlipi/kramlipi.github.io.git
+   ```
+
+4. Push again — Actions redeploys to the root URL
+
+### GitHub Pages settings
+
+1. Open **https://github.com/kramlipi/kramlipi.github.io/settings/pages** (after rename)
+2. **Build and deployment** → **Source** → **GitHub Actions**
+3. Push to `main` or run **Deploy documentation to GitHub Pages** manually
+
+### Live URL (after rename)
+
+**https://kramlipi.github.io/**
+
+Quick start: **https://kramlipi.github.io/kramlipi-ai-code-agent/quick-start/**
 
 ### Custom domain (optional)
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kramlipi.github.io/kramlipi/sitemap.xml
+Sitemap: https://kramlipi.github.io/sitemap.xml

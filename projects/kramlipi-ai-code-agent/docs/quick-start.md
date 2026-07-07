@@ -1,166 +1,291 @@
 ---
 title: Quick Start
 description: >-
-  Install Kramlipi AI Code Agent, run doctor, sync API keys, and execute your
-  first code-agent command in under five minutes.
-keywords: code-agent install, quick start, doctor, gemini api key, pip install
+  Install the code-agent binary, set GEMINI_API_KEY, run your first command,
+  then fix failing unit tests in a git repo with explained flags.
+keywords: install code-agent, GEMINI_API_KEY, verify-cmd, workspace, bug-fix
 ---
 
 # Quick Start
 
-Get **code-agent** running in five minutes.
+Follow these steps in order. No shortcuts.
 
-## Prerequisites
+---
 
-| Requirement | Why |
-|-------------|-----|
-| **Python 3.11+** | Runtime |
-| **ripgrep (`rg`)** | Code search tool; `doctor` fails without it |
-| **LLM access** | `GEMINI_API_KEY`, OpenAI key, or local Ollama |
-| **Git** (optional) | For `--publish` draft MRs via `gh` / `glab` |
+## Step 1 — Get the `code-agent` binary
 
-## 1. Install
-
-=== "Linux / macOS / WSL"
-
-    ```bash
-    git clone https://github.com/kramlipi/ai-code-agent.git
-    cd ai-code-agent
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install -e ".[dev]"
-    cp config.example.yaml config.yaml
-  ```
-
-=== "Windows (PowerShell)"
-
-    ```powershell
-    git clone https://github.com/kramlipi/ai-code-agent.git
-    cd ai-code-agent
-    python -m venv .venv
-    .venv\Scripts\Activate.ps1
-    pip install -e ".[dev]"
-    copy config.example.yaml config.yaml
-    ```
-
-Or use the helper script (Linux/WSL):
+`code-agent` is installed as a **CLI command** when you `pip install` the project (it is not a separate download).
 
 ```bash
-bash install.sh
-source .venv/bin/activate
+# Clone the product repo
+git clone https://github.com/kramlipi/ai-code-agent.git
+cd ai-code-agent
+
+# Create virtualenv (required on Ubuntu/Debian)
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\Activate.ps1
+
+# Install — this creates the binary
+pip install -e ".[dev]"
+
+# Copy config template
+cp config.example.yaml config.yaml
 ```
 
-## 2. API key
-
-=== "Environment variable"
-
-    ```bash
-    export GEMINI_API_KEY="your-key-here"
-    ```
-
-=== "WSL + Windows env sync"
-
-    Set Windows user variable `geminikey`, then:
-
-    ```bash
-    code-agent env sync
-    code-agent env show    # values redacted
-    ```
-
-## 3. Preflight
+**Check the binary exists:**
 
 ```bash
-code-agent doctor
-code-agent doctor --provider-test   # optional: live LLM ping
-```
-
-**Expected (healthy):**
-
-```text
-✓ Python 3.11+
-✓ ripgrep available
-✓ config.yaml found
-✓ LLM provider reachable (with --provider-test)
-```
-
-**Exit code:** `0` on success, `1` on failure.
-
-## 4. See what's available
-
-```bash
-code-agent experts list
-code-agent config show
+which code-agent
+code-agent --version
 ```
 
 **Expected:**
 
 ```text
-Experts:
-  bug-fix          CI/build log → fix → MR
-  test-intel       Diff → impacted tests
-  deploy-guard     Metrics → pass/block/rollback
-  sre-expert       Alert → reliability fix
-  monitoring-expert  Repo observability audit
+/path/to/ai-code-agent/.venv/bin/code-agent
 ```
 
-## 5. First commands
+If `which code-agent` prints nothing → run `source .venv/bin/activate` again.
 
-### Run a one-shot task
+**Also install ripgrep** (required for code search):
 
 ```bash
-code-agent run "Add type hints to src/utils.py" --workspace .
+# Ubuntu/Debian
+sudo apt install ripgrep
+
+# macOS
+brew install ripgrep
 ```
 
-With verification:
+---
+
+## Step 2 — Set `GEMINI_API_KEY`
+
+Get a key from [Google AI Studio](https://aistudio.google.com/apikey).
+
+=== "Linux / macOS / WSL"
+
+    ```bash
+    export GEMINI_API_KEY="AIza..."
+    ```
+
+    Add to `~/.bashrc` or `~/.zshrc` to persist:
+
+    ```bash
+    echo 'export GEMINI_API_KEY="AIza..."' >> ~/.bashrc
+    source ~/.bashrc
+    ```
+
+=== "Windows PowerShell"
+
+    ```powershell
+    $env:GEMINI_API_KEY = "AIza..."
+    ```
+
+=== "WSL + key stored in Windows"
+
+    1. Windows → Settings → Environment variables → User → New → name `geminikey`, paste key  
+    2. In WSL:
+
+    ```bash
+    code-agent env sync
+    code-agent env show
+    ```
+
+**Verify key is visible (value hidden):**
 
 ```bash
-code-agent run "Fix failing login test" \
-  --verify-cmd "pytest -q tests/test_auth.py" \
-  -w .
+code-agent env show
+code-agent doctor
+code-agent doctor --provider-test    # pings Gemini — optional but recommended
 ```
 
-### Fix CI from a log (bug-fix expert)
+**Expected:** exit code `0`, no errors about missing API key.
+
+---
+
+## Step 3 — Smallest possible example
+
+This proves install + API key + agent loop work.
 
 ```bash
-pytest -q 2>&1 | tee /tmp/ci.log
+cd ai-code-agent
+source .venv/bin/activate
+
+code-agent run "Add one line to README.md explaining this project is a coding agent CLI" -w .
+```
+
+### Flags used
+
+| Flag | Long form | What it means | Why you need it |
+|------|-----------|---------------|-----------------|
+| `-w` | `--workspace` | **Which git repo** the agent may read/edit | Tells agent where your code lives. `.` = current folder |
+
+**Expected on success:**
+
+```text
+Status: done
+Files: README.md
+```
+
+**Exit code:** `0`
+
+!!! note "Dry run (no file changes)"
+    Add `--dry-run` to test without writing files. Agent plans only; writes are blocked.
+
+---
+
+## Step 4 — Fix failing unit tests in **your** git repo
+
+The agent can work on **any** repository — not only `ai-code-agent`.
+
+**Important flags (used in every real fix):**
+
+| Flag | What it means | Why |
+|------|---------------|-----|
+| `-w PATH` | Target repo root | Agent edits *that* repo's files |
+| `--verify-cmd "CMD"` | Shell command that **must exit 0** | Proof the fix works — same as CI |
+| `--log FILE` | Saved test/CI output | `bug-fix` expert parses errors from this file |
+| `--dry-run` | No publish; may still write locally | Safe first try |
+| `--publish` | Commit + push + **draft MR/PR** | Needs `gh` or `glab` logged in |
+| `-c` / `--config` | Path to `config.yaml` | Override model/settings |
+| `--base-branch` | MR targets this branch | Default `main` |
+
+### Generic workflow (any language)
+
+```bash
+# 1) Go to YOUR project (example)
+cd /path/to/your-git-repo
+
+# 2) Run tests — see them fail — save log
+<your-test-command> 2>&1 | tee /tmp/ci.log
+echo "Exit code: $?"
+
+# 3) Run bug-fix expert (from any terminal with code-agent in PATH)
+source ~/karm/ai-code-agent/.venv/bin/activate   # or your venv
+
 code-agent experts run bug-fix \
   --log /tmp/ci.log \
-  --verify-cmd "pytest -q"
+  --verify-cmd "<same-test-command-as-CI>" \
+  -w /path/to/your-git-repo
 ```
 
-### Open a draft MR after fix
+**What happens inside:**
+
+1. **Parse** `/tmp/ci.log` → find test failures, line numbers, files  
+2. **RCA** → match errors with recent `git diff`  
+3. **Fix** → edit source/tests with tools (not chat-only)  
+4. **Verify** → run `--verify-cmd` until exit `0` or max iterations  
+
+**Expected success:**
+
+```text
+Status: done
+signal_count: 1+
+files_touched: [...]
+```
+
+---
+
+## Step 5 — Language-specific examples
+
+Pick your language:
+
+| Language | Test command | Guide |
+|----------|--------------|-------|
+| **Python** | `pytest -q` | [Python example →](examples/python.md) |
+| **Go** | `go test -v ./...` | [Go example →](examples/go.md) |
+| **Java** | `mvn test` or `./gradlew test` | [Java example →](examples/java.md) |
+
+---
+
+## Step 6 — Increase unit test coverage
+
+When CI fails because coverage is too low:
 
 ```bash
+cd /path/to/your-python-repo
+source /path/to/ai-code-agent/.venv/bin/activate
+
+pytest -q --cov=your_package --cov-report=term-missing --cov-fail-under=80 \
+  2>&1 | tee /tmp/coverage.log
+
 code-agent experts run bug-fix \
-  --log /tmp/ci.log \
-  --verify-cmd "pytest -q" \
+  --log /tmp/coverage.log \
+  --verify-cmd "pytest -q --cov=your_package --cov-report=term-missing --cov-fail-under=80" \
+  -w /path/to/your-python-repo
+```
+
+The agent is told to **add tests**, not delete production code.
+
+Full runbook: [Coverage](coverage.md)
+
+---
+
+## Step 7 — Missing telemetry + merge request
+
+Find HTTP handlers without metrics and open a draft PR:
+
+```bash
+code-agent experts run monitoring-expert \
+  -w /path/to/your-repo \
+  --dry-run
+
+# When happy with dry-run output, publish MR:
+code-agent experts run monitoring-expert \
+  -w /path/to/your-repo \
   --publish
 ```
 
-Requires authenticated `gh` (GitHub) or `glab` (GitLab).
+| Flag | Why |
+|------|-----|
+| `--dry-run` | See findings first, no git publish |
+| `--publish` | Creates branch + draft MR with instrumentation changes |
+| `-w` | Repo to scan |
 
-### Point at any repo
+Requires `gh auth login` (GitHub) or `glab auth login` (GitLab).
 
-Workspace does **not** have to be the code-agent repo:
+---
+
+## Step 8 — Flaky CI failures
+
+**What code-agent does today:**
+
+- Parses the **current** failure log and fixes real bugs  
+- **RCA** correlates failure with git diff + prior runs  
+- **Dedup:** same failure fingerprint within 24h → `skipped` (avoids duplicate MRs)
+
+**What it does not do yet:** automatic “this test is flaky” scoring from history.
+
+**Practical workflow:**
 
 ```bash
-code-agent run "Add GET /health endpoint with a test" \
-  --verify-cmd "go test -v ./..." \
-  -w /path/to/your-project
+# Save the failing CI log
+code-agent experts run bug-fix \
+  --log /tmp/ci.log \
+  --verify-cmd "pytest -q" \
+  -w /path/to/repo
+
+# Babysit an open PR until CI stays green
+code-agent experts watch --pr 42 --verify-cmd "pytest -q" -w /path/to/repo
 ```
 
-Priority: CLI `-w` → `config.yaml` `workspace:` → env `CODE_AGENT_WORKSPACE`.
+---
 
 ## Exit codes
 
 | Code | Meaning |
 |------|---------|
-| `0` | Success (done, skipped, or test plan produced) |
-| `1` | Startup / config / doctor failure |
-| `2` | Ran but failed (verify fail, max iterations, expert failed) |
+| `0` | Success |
+| `1` | Install/config/doctor problem |
+| `2` | Agent ran but verify failed |
 
-## What's next?
+---
 
-- [Commands](commands.md) — full CLI reference
-- [Experts](experts.md) — each expert's inputs and outputs
-- [Recipes](recipes.md) — Python tests, Go tests, CI babysit, coverage
+## Next
+
+- [Python failing tests](examples/python.md)
+- [Go failing tests](examples/go.md)
+- [Java failing tests](examples/java.md)
+- [All CLI flags](commands.md)
+- [Experts reference](experts.md)
