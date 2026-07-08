@@ -25,7 +25,67 @@ Use it in **CI and local development** when you need to:
 
 ---
 
-## Quick start (5 steps)
+## Quick start
+
+Choose one install path:
+
+| Path | Best for |
+|------|----------|
+| **[Container image (GHCR)](quick-start.md#step-1--pull-the-container-image-recommended)** | Fastest — no clone, no `pip install` |
+| **[pip install from source](quick-start.md#step-1b--install-from-source)** | Developing or hacking on code-agent itself |
+
+**Published image:**
+
+```text
+ghcr.io/kramlipi/code-agent:latest
+```
+
+Package: [kramlipi/code-agent on GHCR](https://github.com/kramlipi?tab=packages)
+
+### Fastest path — container image
+
+```bash
+docker pull ghcr.io/kramlipi/code-agent:latest
+
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
+export GEMINI_API_KEY="your-key"
+
+# After the image name = normal code-agent CLI (ENTRYPOINT is code-agent)
+docker run --rm -it \
+  -e CODE_AGENT_MODEL \
+  -e GEMINI_API_KEY \
+  -v "$PWD:/workspace" \
+  ghcr.io/kramlipi/code-agent:latest \
+  doctor --provider-test
+```
+
+| Piece | Meaning |
+|-------|---------|
+| `-e CODE_AGENT_MODEL` / `-e GEMINI_API_KEY` | model + API key |
+| `-v "$PWD:/workspace"` | mount your repo |
+| `doctor --provider-test` | becomes `code-agent doctor --provider-test` inside the image |
+| later: `-w /workspace` | code-agent workspace flag (match the mount) |
+
+Fix failing tests in **your** repo (mount it to `/workspace`):
+
+```bash
+cd /path/to/your-repo
+
+docker run --rm -it \
+  -e CODE_AGENT_MODEL \
+  -e GEMINI_API_KEY \
+  -v "$PWD:/workspace" \
+  ghcr.io/kramlipi/code-agent:latest \
+  run "Fix all failing unit tests. Minimal changes only." \
+  --verify-cmd "pytest -q" \
+  -w /workspace
+```
+
+👉 **Full container guide + argument mapping:** [Quick Start → How container arguments are passed](quick-start.md#how-container-arguments-are-passed)
+
+---
+
+## Quick start from source (5 steps)
 
 ### Step 1 — Install the binary
 
@@ -156,4 +216,5 @@ The agent **refuses** to edit `.github/workflows/**` to cheat CI.
 - **Docs:** [https://kramlipi.github.io/](https://kramlipi.github.io/)
 - **Source:** [github.com/kramlipi/kramlipi.github.io](https://github.com/kramlipi/kramlipi.github.io)
 - **Product repo:** [github.com/kramlipi/ai-code-agent](https://github.com/kramlipi/ai-code-agent)
+- **Container image:** `ghcr.io/kramlipi/code-agent:latest`
 - **Search:** `Ctrl+K` / `Cmd+K`
