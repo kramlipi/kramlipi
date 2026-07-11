@@ -85,7 +85,7 @@ Checks Python, ripgrep, config, and optionally pings the LLM provider.
 | `--verify-plan TASK` | Show auto-resolved **SuccessSpec** / verify command for a task (no agent run) |
 | `--workspace`, `-w` | Project root for discovery |
 
-**SuccessSpec (Phase A):** the objective gate is still `--verify-cmd` / discovered verify. See [Goal engine — sample commands](goal-engine.md).
+**Verify gate:** pass `--verify-cmd` so the agent only finishes when that command exits `0`. See [How to use verify commands](goal-engine.md).
 
 ---
 
