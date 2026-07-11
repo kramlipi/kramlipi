@@ -116,6 +116,7 @@ exclude_docs: |
 
 nav:
   - Home: index.md
+  - Get started (1 min): get-started.md
   - Quick Start: quick-start.md
   - Essay: articles/the-computer-that-doesnt-guess.md
   - Use Cases: use-cases.md

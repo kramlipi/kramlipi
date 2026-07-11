@@ -10,6 +10,9 @@ keywords: code-agent, ci automation, unit tests, coverage, telemetry, merge requ
 
 **`code-agent`** is a terminal CLI that reads your **git repo**, uses AI + real tools to edit code, runs a **verify command** to prove the fix works, and optionally opens a **draft merge request**.
 
+!!! tip "Start here — about 60 seconds"
+    **[Get started in 1 minute](get-started.md)** — API key + one script (or one Docker command).
+
 Use it in **CI and local development** when you need to:
 
 | Problem | What code-agent does |
@@ -28,6 +31,8 @@ Use it in **CI and local development** when you need to:
 ---
 
 ## Quick start
+
+**Want the shortest path?** → **[Get started in 1 minute](get-started.md)**
 
 | Step | What |
 |------|------|
@@ -55,7 +60,7 @@ Invoke-WebRequest -Uri "https://gist.githubusercontent.com/kramlipi/387228f78eb4
 
 Gists: [Linux](https://gist.github.com/kramlipi/d31f4f454cd127cfb552e5ed5e854af3) · [Windows](https://gist.github.com/kramlipi/387228f78eb47e437f578f625a101707)
 
-Essay: [The computer that doesn’t guess](articles/the-computer-that-doesnt-guess.md) · Full guide: [Quick Start](quick-start.md) · [Verify commands](commands.md#how-to-use-verify-commands)
+Essay: [The computer that doesn’t guess](articles/the-computer-that-doesnt-guess.md) · **[Get started (1 min)](get-started.md)** · [Quick Start](quick-start.md) · [Verify commands](commands.md#how-to-use-verify-commands)
 
 ### CLI without the browser
 
@@ -170,10 +175,12 @@ Requires `gh auth login` (GitHub) or `glab auth login` (GitLab).
 
 | Page | Contents |
 |------|----------|
+| [**Get started (1 min)**](get-started.md) | Fastest path — key + script or one Docker command |
 | [**Use Cases**](use-cases.md) | **Early adopter playbook** — why, command, benefit per scenario |
 | [Quick Start](quick-start.md) | **docker-ui.sh** · image · API key · CLI · coverage |
 | [Essay](articles/the-computer-that-doesnt-guess.md) | What it achieves + how it sits in CI |
 | [Commands](commands.md) | Full CLI reference · **help / `-h` / tab completion** |
+| [Pains](pains.md) | Developer + DevOps pains → what to run |
 | [Experts](experts.md) | bug-fix, test-intel, monitoring-expert, … |
 | [Recipes](recipes.md) | Copy-paste workflows |
 | [Coverage](coverage.md) | Raise unit test coverage with pytest-cov |

@@ -8,6 +8,9 @@ keywords: install code-agent, GEMINI_API_KEY, verify-cmd, workspace, bug-fix
 
 # Quick Start
 
+!!! tip "Need only 60 seconds?"
+    Jump to **[Get started in 1 minute](get-started.md)** — key + one script (or one Docker CLI command). This page is the full guide.
+
 Two ways to run `code-agent`:
 
 | Path | When to use |
