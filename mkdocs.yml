@@ -67,6 +67,10 @@ plugins:
         background_color: "#3949ab"
         color: "#ffffff"
 
+# Post-build: write site/.nojekyll so GSC can fetch /sitemap.xml on GitHub Pages
+hooks:
+  - hooks.py
+
 extra:
   generator: false
   social:

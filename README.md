@@ -17,6 +17,16 @@ All pages live at the site root (no `/kramlipi-ai-code-agent/` prefix):
 - **SEO** — meta tags, sitemap, social cards
 - **Dark / light mode**
 
+### Google Search Console sitemap
+
+Local folder `site/` is **build output only** (gitignored). After deploy, files are published at the **domain root**:
+
+| Wrong (404) | Correct |
+|-------------|---------|
+| `https://kramlipi.github.io/site/sitemap.xml` | `https://kramlipi.github.io/sitemap.xml` |
+
+In GSC → Sitemaps, submit: `sitemap.xml` or `https://kramlipi.github.io/sitemap.xml`.
+
 ## Quick start (local)
 
 ```bash
