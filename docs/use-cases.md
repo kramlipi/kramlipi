@@ -10,6 +10,8 @@ keywords: code-agent use cases, ci automation, early adopter, devops, test cover
 
 You are not buying a chatbot. You are adding a **verify-gated automation worker** that reads logs, edits your repo, and proves fixes with the same command CI uses.
 
+**Pain index:** [Developer & DevOps pains](pains.md) — every pain we target, what “fixed” means, and the first command to try.
+
 Every example below follows the same pattern:
 
 | | |
@@ -492,6 +494,7 @@ code-agent chat -w /path/to/your-repo
 
 ## Related docs
 
+- [Pains catalog](pains.md) — developer + DevOps pains → use cases
 - [Quick Start](quick-start.md) — install and first command
 - [Experts](experts.md) — inputs/outputs per expert
 - [Recipes](recipes.md) — copy-paste commands without narrative
