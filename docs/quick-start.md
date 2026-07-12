@@ -1,9 +1,11 @@
 ---
 title: Quick Start
 description: >-
-  KramLipi Code agent — increase coverage and fix CI with GEMINI_API_KEY,
-  -w workspace, and --verify-cmd. Real working steps first.
-keywords: install code-agent, GEMINI_API_KEY, verify-cmd, workspace, coverage, Go
+  Download the code-agent binary first, set GEMINI_API_KEY, then increase
+  coverage, fix broken builds, or post PR line reviews. Docker is optional.
+keywords: >-
+  install code-agent, binary download, increase coverage, fix broken CI,
+  PR code review, GEMINI_API_KEY, verify-cmd, Docker GHCR
 ---
 
 # Quick Start
@@ -15,18 +17,31 @@ keywords: install code-agent, GEMINI_API_KEY, verify-cmd, workspace, coverage, G
 Developers ship code faster — but unit tests and failed builds pile up.
 This agent fixes that in the **CI pipeline** (and locally with the same commands).
 
-Full docs: [https://kramlipi.github.io/](https://kramlipi.github.io/)
+Full docs: [https://kramlipi.github.io/](https://kramlipi.github.io/) · [Get started](get-started.md)
 
 ---
 
-## These are the only steps that matter (worked in practice)
+## These are the only steps that matter
 
-### 1. Set environment variables (Gemini)
+### 1. Binary first (recommended)
+
+**[Google Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing)** · [GitHub Releases](https://github.com/kramlipi/kramlipi.github.io/releases)
+
+```bash
+chmod +x code-agent   # Linux / macOS
+./code-agent doctor --provider-test
+```
+
+Windows: download `code-agent.exe` → `.\code-agent.exe doctor --provider-test`
+
+More binary detail: [Step 1c — Download standalone binary](#step-1c--download-standalone-binary)
+
+### 2. ENV (Gemini)
 
 Get a key from [Google AI Studio](https://aistudio.google.com/).
 
 ```bash
-export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
 export GEMINI_API_KEY=YOUR_SECRET_KEY
 ```
 
@@ -36,32 +51,75 @@ export GEMINI_API_KEY=YOUR_SECRET_KEY
 | `GEMINI_API_KEY` | Your Gemini API key |
 
 !!! tip "Model string"
-    Prefer the LiteLLM form `gemini/gemini-3.1-flash-lite`. A bare name like `gemini-3.1-flash-lite` is usually normalized the same way.
+    Prefer the LiteLLM form `gemini/gemini-2.0-flash`.
 
-### 2. Run one command on your repo
+### 3. By use case — what do you want to do?
 
-Example — raise Go unit test coverage / fix tests:
+#### Increase code coverage
+
+**Pain:** Coverage gate / missing tests.  
+**Do this:**
 
 ```bash
 code-agent run "increase unit test coverage" \
-  -w /mnt/d/karm/vibe-code/kramlipi-ci-demo-golang/ \
+  -w /path/to/your-repo \
   --verify-cmd "go test ./..."
 ```
 
-| Flag | Meaning |
-|------|---------|
-| `-w` / `--workspace` | **Folder path** of the git repo the agent may read and edit |
-| `--verify-cmd` | **Shell command** that must exit `0` — proves the agent did the right thing (same idea as CI) |
-
-Replace the `-w` path with **your** project. Examples:
-
 | Language | Example `--verify-cmd` |
 |----------|------------------------|
-| Go | `go test ./...` or `go test -v ./...` |
-| Python | `pytest -q` |
+| Go | `go test ./...` |
+| Python | `pytest -q --cov=PACKAGE --cov-fail-under=80` |
 | Java | `mvn test` |
 
-### 3. Same idea with the container image
+→ [Coverage](coverage.md) · [Use cases](use-cases.md#4-coverage-gate-blocking-merge)
+
+#### Fix a broken build / failing tests
+
+**Pain:** CI red; huge log.  
+**Do this:**
+
+```bash
+go test ./... 2>&1 | tee /tmp/ci.log
+
+code-agent experts run bug-fix \
+  --log /tmp/ci.log \
+  --verify-cmd "go test ./..." \
+  -w /path/to/your-repo
+```
+
+→ [Python](examples/python.md) · [Go](examples/go.md) · [Java](examples/java.md)
+
+#### Review a PR (inline comments)
+
+**Pain:** No automated first-pass line review.  
+**Do this:**
+
+```bash
+export GH_TOKEN=...   # or gh auth / GITHUB_TOKEN in CI
+
+code-agent experts run code-review --pr 42 -w /path/to/your-repo
+code-agent experts run code-review --pr 42 --dry-run -w /path/to/your-repo
+```
+
+→ [Use cases](use-cases.md) · [Experts](experts.md)
+
+#### Other features
+
+| I want to… | Command | Detail |
+|------------|---------|--------|
+| Impacted tests only | `experts run test-intel --pr N` | [Experts](experts.md) |
+| Babysit PR | `experts watch --pr N --verify-cmd "…"` | [Recipes](recipes.md) |
+| Missing metrics | `experts run monitoring-expert --dry-run` | [Use cases](use-cases.md) |
+| Alert → fix | `experts run sre-expert --log alert.json` | [Pains](pains.md) |
+| Deploy gate | `experts run deploy-guard --metrics-file m.json` | [Use cases](use-cases.md) |
+
+| Flag | Meaning |
+|------|---------|
+| `-w` / `--workspace` | Folder path of the git repo to edit |
+| `--verify-cmd` | Shell command that must exit `0` |
+
+### 4. Docker (optional — second choice)
 
 ```bash
 docker pull ghcr.io/kramlipi/code-agent:latest
@@ -69,7 +127,7 @@ docker pull ghcr.io/kramlipi/code-agent:latest
 docker run --rm -it \
   -e CODE_AGENT_MODEL \
   -e GEMINI_API_KEY \
-  -v "/mnt/d/karm/vibe-code/kramlipi-ci-demo-golang:/workspace" \
+  -v "/path/to/your-repo:/workspace" \
   ghcr.io/kramlipi/code-agent:latest \
   run "increase unit test coverage" \
   --verify-cmd "go test ./..." \
@@ -84,13 +142,13 @@ Inside Docker, mount the repo to `/workspace` and pass `-w /workspace`.
 
 | Path | When to use |
 |------|-------------|
-| **[Container image (GHCR)](#step-1--pull-the-container-image-recommended)** | Fastest — pull and run |
-| **[Standalone binary](#step-1c--download-standalone-binary)** | Native download — [Google Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing) |
+| **[Standalone binary](#step-1c--download-standalone-binary)** | Native download — preferred |
+| **[Container image (GHCR)](#step-1--pull-the-container-image)** | No local binary — pull and run |
 | **[pip install from source](#step-1b--install-from-source)** | Developing code-agent itself |
 
 ---
 
-## Step 1 — Pull the container image (recommended)
+## Step 1 — Pull the container image
 
 `code-agent` is published on **GitHub Container Registry**:
 

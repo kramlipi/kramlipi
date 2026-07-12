@@ -8,7 +8,17 @@ keywords: python pytest, failing unit test, code-agent bug-fix, verify-cmd
 
 # Python — Failing Unit Test Example
 
-End-to-end example: **create a failing test → fix with code-agent**.
+## What do you want?
+
+| Goal | Command |
+|------|---------|
+| **Fix a broken build / failing pytest** | `code-agent experts run bug-fix --log /tmp/ci.log --verify-cmd "pytest -q" -w .` |
+| **Increase coverage** | `code-agent run "increase unit test coverage" --verify-cmd "pytest -q --cov=PKG --cov-fail-under=80" -w .` |
+| **PR line review** | `code-agent experts run code-review --pr N -w .` |
+
+End-to-end below: **create a failing test → fix with code-agent**.
+
+Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md)
 
 ---
 

@@ -19,7 +19,7 @@ This agent fixes that in the **CI pipeline**.
 
 ```bash
 # 1) Gemini — https://aistudio.google.com/
-export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
 export GEMINI_API_KEY=YOUR_SECRET_KEY
 
 # 2) Point at your repo + prove with a verify command

@@ -1,9 +1,11 @@
 ---
 title: Kramlipi Docs — code-agent
 description: >-
-  code-agent — AI CLI for CI failures, failing unit tests, code coverage,
-  missing tests, flaky CI triage, and missing telemetry with merge requests.
-keywords: code-agent, ci automation, unit tests, coverage, telemetry, merge request
+  Increase code coverage, fix broken CI builds, and get automated PR line-comment
+  reviews with code-agent. Binary download first; verify-gated AI for GitHub CI.
+keywords: >-
+  increase code coverage, fix broken CI, PR code review comments, code-agent,
+  failing unit tests, GEMINI_API_KEY, verify-cmd
 ---
 
 # KramLipi Code agent
@@ -13,236 +15,160 @@ keywords: code-agent, ci automation, unit tests, coverage, telemetry, merge requ
 Developers ship code faster — but unit tests and failed builds pile up.
 This agent fixes that in the **CI pipeline**.
 
-**`code-agent`** is a terminal CLI that reads your **git repo**, uses AI + real tools to edit code, runs a **verify command** to prove the fix works, and optionally opens a **draft merge request**.
-
-## Real quick start (what actually works)
-
-```bash
-# 1) Gemini — https://aistudio.google.com/
-export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
-export GEMINI_API_KEY=YOUR_SECRET_KEY
-
-# 2) Point at your repo + prove with a verify command
-code-agent run "increase unit test coverage" \
-  -w /path/to/your-repo \
-  --verify-cmd "go test ./..."
-```
-
-| Flag | Meaning |
-|------|---------|
-| `-w` | Folder path of the workspace (repo) to edit |
-| `--verify-cmd` | Command that must exit `0` — checks the agent did the right thing |
-
-Full walkthrough: [Quick Start](quick-start.md)
-
----
-
-Use it in **CI and local development** when you need to:
-
-| Problem | What code-agent does |
-|---------|----------------------|
-| **CI pipeline failed** | Reads the build log → finds root cause → fixes code → re-runs your verify command |
-| **Failing unit tests** | Fixes Python (`pytest`), Go (`go test`), Java (`mvn test`), and more |
-| **Low code coverage** | Adds missing unit tests (does **not** delete code to cheat coverage) |
-| **Missing unit tests** | Writes new tests under `tests/` or `src/test/` |
-| **Flaky / repeated CI failures** | Parses logs + git diff + run history (RCA); deduplicates same failure within 24h |
-| **Slow CI** | `test-intel`: git diff → run only impacted tests |
-| **Missing telemetry** | `monitoring-expert` finds handlers without Prometheus/OpenTelemetry metrics |
-| **MR for telemetry gaps** | `monitoring-expert --publish` → draft PR with instrumentation fixes |
+**`code-agent`** reads your **git repo**, edits with AI + tools, proves work with a **verify command**, and can open a **draft MR** or post **PR line comments**.
 
 ---
 
 ## Quick start
 
-Choose one install path:
+### 1. Binary first (recommended)
 
-| Path | Best for |
-|------|----------|
-| **[Container image (GHCR)](quick-start.md#step-1--pull-the-container-image-recommended)** | Fastest — no clone, no `pip install` |
-| **[Standalone binary](quick-start.md#step-1c--download-standalone-binary)** | Native CLI — [Google Drive download](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing) |
-| **[pip install from source](quick-start.md#step-1b--install-from-source)** | Developing or hacking on code-agent itself |
+Download Linux / macOS / Windows:
 
-**Published image:**
+**[Google Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing)** · **[GitHub Releases](https://github.com/kramlipi/kramlipi.github.io/releases)**
 
-```text
-ghcr.io/kramlipi/code-agent:latest
+```bash
+chmod +x code-agent   # Linux / macOS
+# Windows: code-agent.exe
 ```
 
-Package: [kramlipi/code-agent on GHCR](https://github.com/kramlipi?tab=packages)
+### 2. ENV (Gemini)
 
-### Fastest path — container image
+Key from [Google AI Studio](https://aistudio.google.com/):
+
+```bash
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
+export GEMINI_API_KEY=YOUR_SECRET_KEY
+```
+
+### 3. What do you want to do? (commands)
+
+#### Increase code coverage
+
+**Pain:** Coverage gate blocks merge.  
+**Fix:** Agent adds tests; your verify command must still exit `0`.
+
+```bash
+code-agent run "increase unit test coverage" \
+  -w /path/to/your-repo \
+  --verify-cmd "go test ./..."
+```
+
+Python: `--verify-cmd "pytest -q --cov=PACKAGE --cov-fail-under=80"` → [Coverage](coverage.md)
+
+#### Fix a broken build / failing tests
+
+**Pain:** CI failed; log is unreadable; you need a scoped green fix.  
+**Fix:** Parse log → edit code → re-run the same CI command.
+
+```bash
+go test ./... 2>&1 | tee /tmp/ci.log
+# or: pytest -q 2>&1 | tee /tmp/ci.log
+
+code-agent experts run bug-fix \
+  --log /tmp/ci.log \
+  --verify-cmd "go test ./..." \
+  -w /path/to/your-repo
+```
+
+Language walkthroughs: [Python](examples/python.md) · [Go](examples/go.md) · [Java](examples/java.md)
+
+#### Review a PR (inline line comments)
+
+**Pain:** PRs merge without a first-pass review for bugs / nits / security smells.  
+**Fix:** LLM reviews the PR diff and posts **GitHub inline comments** (comment-only).
+
+```bash
+export GH_TOKEN=...   # or GITHUB_TOKEN in Actions
+
+code-agent experts run code-review --pr 42 -w /path/to/your-repo
+code-agent experts run code-review --pr 42 --dry-run -w /path/to/your-repo
+```
+
+More: [Experts](experts.md) · [Use cases](use-cases.md)
+
+#### Other features
+
+| I want to… | Do this | Detail |
+|------------|---------|--------|
+| Run fewer tests on a PR | `code-agent experts run test-intel --pr N -w .` | [Experts](experts.md) |
+| Babysit PR until green | `code-agent experts watch --pr N --verify-cmd "…" -w .` | [Recipes](recipes.md) |
+| Find missing metrics | `code-agent experts run monitoring-expert -w . --dry-run` | [Experts](experts.md) |
+| Alert → reliability fix | `code-agent experts run sre-expert --log alert.json -w .` | [Use cases](use-cases.md) |
+| Canary / deploy gate | `code-agent experts run deploy-guard --metrics-file m.json` | [Use cases](use-cases.md) |
+
+| Flag | Meaning |
+|------|---------|
+| `-w` | Repo folder the agent may edit |
+| `--verify-cmd` | Must exit `0` — success is not model opinion |
+
+Full walkthrough: **[Quick Start](quick-start.md)** · 1-minute: **[Get started](get-started.md)**
+
+### Pricing
+
+| Free | Team $49/mo | Business $199/mo |
+|------|-------------|------------------|
+| Prove one green verify (capped) | Commercial CI | + PR babysit / higher volume |
+
+→ [Get started — Pricing](get-started.md#pricing-adoption--revenue)
+
+---
+
+### 4. Docker (second choice)
 
 ```bash
 docker pull ghcr.io/kramlipi/code-agent:latest
 
-export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
-export GEMINI_API_KEY="your-key"
-
-# After the image name = normal code-agent CLI (ENTRYPOINT is code-agent)
 docker run --rm -it \
   -e CODE_AGENT_MODEL \
   -e GEMINI_API_KEY \
   -v "$PWD:/workspace" \
   ghcr.io/kramlipi/code-agent:latest \
-  doctor --provider-test
-```
-
-| Piece | Meaning |
-|-------|---------|
-| `-e CODE_AGENT_MODEL` / `-e GEMINI_API_KEY` | model + API key |
-| `-v "$PWD:/workspace"` | mount your repo |
-| `doctor --provider-test` | becomes `code-agent doctor --provider-test` inside the image |
-| later: `-w /workspace` | code-agent workspace flag (match the mount) |
-
-Fix failing tests in **your** repo (mount it to `/workspace`):
-
-```bash
-cd /path/to/your-repo
-
-docker run --rm -it \
-  -e CODE_AGENT_MODEL \
-  -e GEMINI_API_KEY \
-  -v "$PWD:/workspace" \
-  ghcr.io/kramlipi/code-agent:latest \
-  run "Fix all failing unit tests. Minimal changes only." \
-  --verify-cmd "pytest -q" \
+  run "increase unit test coverage" \
+  --verify-cmd "go test ./..." \
   -w /workspace
 ```
 
-👉 **Full container guide + argument mapping:** [Quick Start → How container arguments are passed](quick-start.md#how-container-arguments-are-passed)
+Image: `ghcr.io/kramlipi/code-agent:latest` · [GHCR packages](https://github.com/kramlipi?tab=packages)
 
 ---
 
-## Quick start from source (5 steps)
+## After the quick commands
 
-### Step 1 — Install the binary
-
-```bash
-git clone https://github.com/kramlipi/ai-code-agent.git
-cd ai-code-agent
-python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\Activate.ps1
-pip install -e ".[dev]"
-cp config.example.yaml config.yaml
-
-which code-agent    # must print a path
-```
-
-Also install **ripgrep**: `sudo apt install ripgrep` (Ubuntu) or `brew install ripgrep` (macOS).
-
-### Step 2 — Set `GEMINI_API_KEY`
-
-Get a key from [Google AI Studio](https://aistudio.google.com/apikey).
-
-```bash
-export GEMINI_API_KEY="your-key-here"
-code-agent doctor
-code-agent doctor --provider-test
-```
-
-### Step 3 — Smallest example
-
-```bash
-code-agent run "Add one line to README explaining this is a coding agent CLI" -w .
-```
-
-| Flag | Meaning |
-|------|---------|
-| `-w` / `--workspace` | Which git repo the agent may edit (`.` = current folder) |
-
-### Step 4 — Fix failing unit tests
-
-```bash
-cd /path/to/your-repo
-pytest -q 2>&1 | tee /tmp/ci.log
-
-code-agent experts run bug-fix \
-  --log /tmp/ci.log \
-  --verify-cmd "pytest -q" \
-  -w /path/to/your-repo
-```
-
-| Flag | Meaning |
-|------|---------|
-| `--log` | Saved test/CI output — expert parses errors from this file |
-| `--verify-cmd` | Command that **must exit 0** — same as your CI gate |
-| `-w` | Your project repo (not the code-agent install folder) |
-
-### Step 5 — Open a draft merge request (optional)
-
-```bash
-code-agent experts run bug-fix \
-  --log /tmp/ci.log \
-  --verify-cmd "pytest -q" \
-  -w /path/to/your-repo \
-  --publish
-```
-
-Requires `gh auth login` (GitHub) or `glab auth login` (GitLab).
-
-👉 **Full walkthrough:** [Quick Start](quick-start.md)
-
----
-
-## Language examples
-
-| Language | Guide |
-|----------|--------|
-| Python | [Failing pytest →](examples/python.md) |
-| Go | [Failing go test →](examples/go.md) |
-| Java | [Failing JUnit →](examples/java.md) |
-
----
-
-## Documentation
-
-| Page | Contents |
-|------|----------|
-| [Quick Start](quick-start.md) | Install, API key, flags, coverage, telemetry MR |
-| [Commands](commands.md) | Full CLI reference |
-| [Experts](experts.md) | bug-fix, test-intel, monitoring-expert, … |
-| [Recipes](recipes.md) | Copy-paste workflows |
-| [Coverage](coverage.md) | Raise unit test coverage with pytest-cov |
-| [Troubleshooting](troubleshooting.md) | Exit codes, common failures |
+| Next | Why |
+|------|-----|
+| [Get started](get-started.md) | Binary first, use cases, pricing, how to run |
+| [Quick Start](quick-start.md) | Install paths, flags, container mapping |
+| [Use cases](use-cases.md) | Pain → command → benefit |
+| [Pains](pains.md) | Full pain catalog |
+| [Commands](commands.md) | Every CLI flag |
+| [Experts](experts.md) | bug-fix, code-review, test-intel, … |
+| [Coverage](coverage.md) | Raise coverage with pytest-cov |
+| [Security overview](https://github.com/kramlipi/ai-code-agent/blob/main/docs/SECURITY-COMPLIANCE.md) | Enterprise trust / data flow |
+| [Deployment modes](https://github.com/kramlipi/ai-code-agent/blob/main/docs/DEPLOYMENT-MODES.md) | Local binary · CI · local UI |
+| [config](https://github.com/kramlipi/ai-code-agent/blob/main/config.example.yaml) | All config knobs |
 
 ---
 
 ## How verify works
 
-The agent **cannot claim success** unless your command passes:
-
 ```bash
 --verify-cmd "pytest -q"
 ```
 
-| Exit code | Meaning |
-|-----------|---------|
-| `0` | Success — fix accepted |
+| Exit | Meaning |
+|------|---------|
+| `0` | Success |
 | `1` | Config / doctor problem |
-| `2` | Agent ran but verify failed |
+| `2` | Agent ran but verify (or post) failed |
 
 The agent **refuses** to edit `.github/workflows/**` to cheat CI.
-
----
-
-## Experts at a glance
-
-| Expert | Use when |
-|--------|----------|
-| `bug-fix` | CI log has test/compiler/coverage errors |
-| `test-intel` | PR CI slow — run only impacted tests |
-| `monitoring-expert` | Missing metrics → optional MR |
-| `deploy-guard` | Post-deploy metrics check |
-| `sre-expert` | Alert JSON from Alertmanager |
-
-[Full experts reference →](experts.md)
 
 ---
 
 ## Site
 
 - **Docs:** [https://kramlipi.github.io/](https://kramlipi.github.io/)
-- **Source:** [github.com/kramlipi/kramlipi.github.io](https://github.com/kramlipi/kramlipi.github.io)
-- **Product repo:** [github.com/kramlipi/ai-code-agent](https://github.com/kramlipi/ai-code-agent)
-- **Container image:** `ghcr.io/kramlipi/code-agent:latest`
+- **Product:** [github.com/kramlipi/ai-code-agent](https://github.com/kramlipi/ai-code-agent)
+- **Binaries:** [Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing) · [Releases](https://github.com/kramlipi/kramlipi.github.io/releases)
 - **Search:** `Ctrl+K` / `Cmd+K`

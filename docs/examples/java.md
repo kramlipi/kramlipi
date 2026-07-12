@@ -8,7 +8,17 @@ keywords: java junit, maven test, gradle test, code-agent failing unit test
 
 # Java — Failing Unit Test Example
 
+## What do you want?
+
+| Goal | Command |
+|------|---------|
+| **Fix a broken Maven/Gradle build** | `code-agent experts run bug-fix --log /tmp/mvn.log --verify-cmd "mvn test -q" -w .` |
+| **Increase coverage** | `code-agent run "add unit tests to raise coverage" --verify-cmd "mvn test -q" -w .` |
+| **PR line review** | `code-agent experts run code-review --pr N -w .` |
+
 Java uses **JUnit** + **Maven** or **Gradle**. Set `--verify-cmd` to match your build tool.
+
+Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md)
 
 !!! info "Parser note"
     Dedicated Java/JUnit log parser is limited — `bug-fix` uses **generic error parsing** plus the agent reading test output. **`--verify-cmd` is critical** so the agent proves `mvn test` or `./gradlew test` passes.

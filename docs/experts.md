@@ -1,9 +1,9 @@
 ---
 title: Experts
 description: >-
-  code-agent automation experts — bug-fix, test-intel, deploy-guard, sre-expert,
-  and monitoring-expert with inputs, outputs, and example commands.
-keywords: bug-fix expert, test-intel, deploy-guard, sre-expert, monitoring-expert
+  code-agent automation experts — bug-fix, code-review, test-intel, deploy-guard,
+  sre-expert, and monitoring-expert with inputs, outputs, and example commands.
+keywords: bug-fix expert, code-review, test-intel, deploy-guard, sre-expert, monitoring-expert
 ---
 
 # Experts
@@ -56,6 +56,24 @@ code-agent experts run bug-fix \
 | `mr_url` | if `--publish` | prior MR if duplicate | — |
 
 **Artifacts:** `signals.json`, `rca.json`, `fix_request.json`, `trace.json`, `diff.patch`
+
+---
+
+## `code-review` — PR inline line comments
+
+| | |
+|---|---|
+| **When** | First-pass review on a PR diff (nits, bugs, security smells) |
+| **Input** | `--pr N` (required) |
+| **Output** | One GitHub Review with inline comments (`side=RIGHT`) |
+| **Publish** | Comment-only — does **not** open an MR |
+
+```bash
+code-agent experts run code-review --pr 42 -w .
+code-agent experts run code-review --pr 42 --dry-run -w .   # print findings, no API post
+```
+
+Findings: `.code-agent/runs/<run_id>/review-findings.json`. Lines not in the PR diff are skipped. Invalid JSON → exit `2` (fail closed).
 
 ---
 

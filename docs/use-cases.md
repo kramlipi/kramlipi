@@ -397,9 +397,55 @@ docker run --rm -it \
 
 ---
 
-## 9. Day-one developer workflows
+## 9. Automated PR line comments (code-review)
 
-### 9.1 "Just fix this one file" — ad-hoc task
+### 9.1 First-pass review on every pull request
+
+**Why (SEO intent):** “How do I get automated PR code review comments on changed lines?” Manual review misses nits; full senior review doesn’t scale.
+
+**Pain:** PRs merge with bugs, hardcoded secrets, or broken APIs that a quick diff pass would catch.
+
+**How we solve it:** LLM reviews the **PR unified diff**, writes structured findings (`path` + `line`), filters to lines that exist on the RIGHT side of the diff, and posts **one GitHub Review** with inline comments via `gh api`. Comment-only — no auto-fix, no MR.
+
+**Command:**
+
+```bash
+export GH_TOKEN=...   # or GITHUB_TOKEN in Actions
+export GEMINI_API_KEY=...
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
+```
+
+# Preview findings without posting:
+code-agent experts run code-review --pr 42 --dry-run -w /path/to/your-repo
+```
+
+**Benefit:** File:line comments on the PR. Invalid findings JSON fails closed (exit `2`). Lines not in the diff are skipped.
+
+### 9.2 Wire into GitHub Actions
+
+**Why:** Every `pull_request` should get a first-pass without a human clicking “run”.
+
+**Command (CI):**
+
+```yaml
+# see product repo .github/workflows/code-review-template.yml
+- run: |
+    code-agent experts run code-review \
+      --pr ${{ github.event.pull_request.number }} \
+      -w .
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    CODE_AGENT_MODEL: gemini/gemini-2.0-flash
+```
+
+**Benefit:** `pull-requests: write` + model key only. Binary, GHCR image, or pip — same CLI.
+
+---
+
+## 10. Day-one developer workflows
+
+### 10.1 "Just fix this one file" — ad-hoc task
 
 **Why:** Lint rule added; 50 files flagged. You only care about `utils.py` today.
 
@@ -416,7 +462,7 @@ code-agent run \
 
 ---
 
-### 9.2 Explore safely — dry run before writes
+### 10.2 Explore safely — dry run before writes
 
 **Why:** You want to see what the agent *would* change before trusting it on `main`.
 
@@ -434,7 +480,7 @@ code-agent run \
 
 ---
 
-### 9.3 Multi-turn session on a hard bug
+### 10.3 Multi-turn session on a hard bug
 
 **Why:** One-shot failed; you need to steer ("also check the mock fixture").
 
@@ -451,11 +497,11 @@ code-agent chat -w /path/to/your-repo
 
 ---
 
-## 10. What early adopters should NOT expect (yet)
+## 11. What early adopters should NOT expect (yet)
 
 | Wish | Reality today | What to do instead |
 |------|---------------|-------------------|
-| "Review every PR like a senior" | Not a PR review bot | Use for **CI-fix MRs** after failure |
+| "Replace a senior design review" | Ships nits/bugs/security smells as **line comments**, not architecture sign-off | Use `code-review` for first pass; humans for design |
 | "Mark test as flaky automatically" | No flake scorer | Use `bug-fix` + human triage |
 | "Edit GitHub Actions to make green" | **Blocked** by safety policy | Fix app code/tests |
 | "100% correct first try" | Bounded by `max_iterations` | Tighten `--verify-cmd`; use `--dry-run` first |
@@ -463,31 +509,35 @@ code-agent chat -w /path/to/your-repo
 
 ---
 
-## 11. Quick picker — which command for my pain?
+## 12. Quick picker — which command for my pain?
 
 | I need to… | Start here |
 |------------|------------|
-| Fix CI log from failed pipeline | `experts run bug-fix --log …` |
+| Increase code coverage | `run "increase unit test coverage" --verify-cmd …` |
+| Fix CI / broken build from a log | `experts run bug-fix --log …` |
+| PR inline review comments | `experts run code-review --pr N` |
 | Run fewer tests on PR | `experts run test-intel` |
-| Raise coverage / add missing tests | `bug-fix` on coverage log or `run` + cov verify |
+| Raise coverage from cov log | `bug-fix` on coverage log or [Coverage](coverage.md) |
 | PR keeps failing overnight | `experts watch --pr N` |
 | Find missing metrics | `experts run monitoring-expert` |
 | MR for telemetry | `monitoring-expert --publish` |
 | Alert → code fix | `experts run sre-expert --log alert.json` |
 | Post-deploy metric check | `experts run deploy-guard` |
-| Try without installing Python | `docker run … ghcr.io/kramlipi/code-agent` |
+| Try without installing Python | Binary [Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing) or `docker run … ghcr.io/kramlipi/code-agent` |
 | Learn all flags | [Commands](commands.md) |
 | Copy-paste only | [Recipes](recipes.md) |
 
 ---
 
-## 12. Suggested 2-week pilot (one team)
+## 13. Suggested 2-week pilot (one team)
 
 | Week | Action | Success metric |
 |------|--------|----------------|
-| 1 | `doctor` + one `bug-fix --dry-run` on real CI log | Verify exits 0 locally |
+| 1 | Binary + `doctor` + one `bug-fix --dry-run` on real CI log | Verify exits 0 locally |
+| 1 | `code-review --dry-run` on an open PR | Findings look sane |
 | 1 | `test-intel` on 3 PRs | Compare time vs full suite |
 | 2 | `bug-fix --publish` on one failing PR | Draft MR merged with human review |
+| 2 | `code-review` in Actions (no dry-run) | Inline comments on PR |
 | 2 | `monitoring-expert --dry-run` before release | List of metric gaps documented |
 
 ---
@@ -495,6 +545,7 @@ code-agent chat -w /path/to/your-repo
 ## Related docs
 
 - [Pains catalog](pains.md) — developer + DevOps pains → use cases
+- [Home / Quick start](index.md) — binary first, then commands
 - [Quick Start](quick-start.md) — install and first command
 - [Experts](experts.md) — inputs/outputs per expert
 - [Recipes](recipes.md) — copy-paste commands without narrative

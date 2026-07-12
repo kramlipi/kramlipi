@@ -114,6 +114,8 @@ nav:
   - Home: index.md
   - Get started: get-started.md
   - Quick Start: quick-start.md
+  - Use cases: use-cases.md
+  - Pains: pains.md
   - Examples:
       - Python failing tests: examples/python.md
       - Go failing tests: examples/go.md

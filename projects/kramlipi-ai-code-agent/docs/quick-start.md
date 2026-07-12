@@ -26,7 +26,7 @@ Full docs: [https://kramlipi.github.io/](https://kramlipi.github.io/)
 Get a key from [Google AI Studio](https://aistudio.google.com/).
 
 ```bash
-export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
 export GEMINI_API_KEY=YOUR_SECRET_KEY
 ```
 
@@ -36,7 +36,7 @@ export GEMINI_API_KEY=YOUR_SECRET_KEY
 | `GEMINI_API_KEY` | Your Gemini API key |
 
 !!! tip "Model string"
-    Prefer the LiteLLM form `gemini/gemini-3.1-flash-lite`. A bare name like `gemini-3.1-flash-lite` is usually normalized the same way.
+    Prefer the LiteLLM form `gemini/gemini-2.0-flash`. A bare name like `gemini-2.0-flash` is usually normalized the same way.
 
 ### 2. Run one command on your repo
 

@@ -23,7 +23,7 @@ This agent fixes that in the **CI pipeline**.
 Key from [Google AI Studio](https://aistudio.google.com/):
 
 ```bash
-export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
 export GEMINI_API_KEY=YOUR_SECRET_KEY
 ```
 
@@ -53,7 +53,7 @@ Folders: `linux/` · `macos/` · `windows/`
 ```bash
 # After download (Linux/macOS example)
 chmod +x code-agent
-export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
 export GEMINI_API_KEY=YOUR_SECRET_KEY
 ./code-agent run "increase unit test coverage" \
   -w /path/to/your-repo \

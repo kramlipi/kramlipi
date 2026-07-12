@@ -40,7 +40,7 @@ code-agent doctor --verify-plan "go test the package" -w /path/to/go-project
 ### Explicit SuccessSpec (recommended)
 
 ```bash
-export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
+export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
 export GEMINI_API_KEY="your-key"
 
 # Python

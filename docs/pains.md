@@ -67,6 +67,18 @@ code-agent run \
 
 ---
 
+### No first-pass PR review on every change
+
+**Pain:** PRs merge with obvious bugs, secrets, or broken APIs; senior review doesn’t scale.  
+**Fixed when:** Automated **inline comments** on the PR diff (comment-only); humans still own design sign-off.
+
+```bash
+code-agent experts run code-review --pr 42 -w .
+code-agent experts run code-review --pr 42 --dry-run -w .
+```
+
+---
+
 ### Same PR fails again and again
 
 **Pain:** Fix → push → new failure → all-day context switch.  

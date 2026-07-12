@@ -8,7 +8,17 @@ keywords: golang go test, failing unit test, code-agent bug-fix
 
 # Go — Failing Unit Test Example
 
+## What do you want?
+
+| Goal | Command |
+|------|---------|
+| **Fix a broken Go build / failing tests** | `code-agent experts run bug-fix --log /tmp/go.log --verify-cmd "go test ./..." -w .` |
+| **Increase coverage** | `code-agent run "increase unit test coverage" --verify-cmd "go test ./..." -w .` |
+| **PR line review** | `code-agent experts run code-review --pr N -w .` |
+
 Go projects use **`go test`**, not `pytest`. Always set `--verify-cmd "go test ..."`.
+
+Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md)
 
 ---
 
