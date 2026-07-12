@@ -67,10 +67,6 @@ plugins:
         background_color: "#3949ab"
         color: "#ffffff"
 
-# Post-build: write site/.nojekyll so GSC can fetch /sitemap.xml on GitHub Pages
-hooks:
-  - hooks.py
-
 extra:
   generator: false
   social:
@@ -114,17 +110,10 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
 
-# Keep maintainer-only notes out of the site (avoids "not in nav" INFO)
-exclude_docs: |
-  GITHUB-PAGES-ROOT-URL.md
-
 nav:
   - Home: index.md
-  - Get started (1 min): get-started.md
+  - Get started: get-started.md
   - Quick Start: quick-start.md
-  - Essay: articles/the-computer-that-doesnt-guess.md
-  - Use Cases: use-cases.md
-  - Pains catalog: pains.md
   - Examples:
       - Python failing tests: examples/python.md
       - Go failing tests: examples/go.md

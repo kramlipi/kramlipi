@@ -1,28 +1,96 @@
 ---
 title: Quick Start
 description: >-
-  Install the code-agent binary, set GEMINI_API_KEY, run your first command,
-  then fix failing unit tests in a git repo with explained flags.
-keywords: install code-agent, GEMINI_API_KEY, verify-cmd, workspace, bug-fix
+  KramLipi Code agent — increase coverage and fix CI with GEMINI_API_KEY,
+  -w workspace, and --verify-cmd. Real working steps first.
+keywords: install code-agent, GEMINI_API_KEY, verify-cmd, workspace, coverage, Go
 ---
 
 # Quick Start
 
-!!! tip "Need only 60 seconds?"
-    Jump to **[Get started in 1 minute](get-started.md)** — key + one script (or one Docker CLI command). This page is the full guide.
+# KramLipi Code agent
 
-Two ways to run `code-agent`:
+**Increase your code coverage and review automatically.**
 
-| Path | When to use |
-|------|-------------|
-| **[Container image (GHCR)](#step-1-container)** | You want the fastest start — pull and run |
-| **[pip install from source](#step-1b-source)** | You are developing code-agent itself |
+Developers ship code faster — but unit tests and failed builds pile up.
+This agent fixes that in the **CI pipeline** (and locally with the same commands).
 
-After install, see **[Use Cases](use-cases.md)** for real scenarios (CI failures, coverage, telemetry, PR babysit) with **why → command → benefit**.
+Full docs: [https://kramlipi.github.io/](https://kramlipi.github.io/)
 
 ---
 
-## Step 1 — Pull the container image (recommended) {#step-1-container}
+## These are the only steps that matter (worked in practice)
+
+### 1. Set environment variables (Gemini)
+
+Get a key from [Google AI Studio](https://aistudio.google.com/).
+
+```bash
+export CODE_AGENT_MODEL=gemini/gemini-3.1-flash-lite
+export GEMINI_API_KEY=YOUR_SECRET_KEY
+```
+
+| Variable | Meaning |
+|----------|---------|
+| `CODE_AGENT_MODEL` | Which LLM to use |
+| `GEMINI_API_KEY` | Your Gemini API key |
+
+!!! tip "Model string"
+    Prefer the LiteLLM form `gemini/gemini-3.1-flash-lite`. A bare name like `gemini-3.1-flash-lite` is usually normalized the same way.
+
+### 2. Run one command on your repo
+
+Example — raise Go unit test coverage / fix tests:
+
+```bash
+code-agent run "increase unit test coverage" \
+  -w /mnt/d/karm/vibe-code/kramlipi-ci-demo-golang/ \
+  --verify-cmd "go test ./..."
+```
+
+| Flag | Meaning |
+|------|---------|
+| `-w` / `--workspace` | **Folder path** of the git repo the agent may read and edit |
+| `--verify-cmd` | **Shell command** that must exit `0` — proves the agent did the right thing (same idea as CI) |
+
+Replace the `-w` path with **your** project. Examples:
+
+| Language | Example `--verify-cmd` |
+|----------|------------------------|
+| Go | `go test ./...` or `go test -v ./...` |
+| Python | `pytest -q` |
+| Java | `mvn test` |
+
+### 3. Same idea with the container image
+
+```bash
+docker pull ghcr.io/kramlipi/code-agent:latest
+
+docker run --rm -it \
+  -e CODE_AGENT_MODEL \
+  -e GEMINI_API_KEY \
+  -v "/mnt/d/karm/vibe-code/kramlipi-ci-demo-golang:/workspace" \
+  ghcr.io/kramlipi/code-agent:latest \
+  run "increase unit test coverage" \
+  --verify-cmd "go test ./..." \
+  -w /workspace
+```
+
+Inside Docker, mount the repo to `/workspace` and pass `-w /workspace`.
+
+---
+
+## More install paths
+
+| Path | When to use |
+|------|-------------|
+| **[Container image (GHCR)](#step-1--pull-the-container-image-recommended)** | Fastest — pull and run |
+| **[Standalone binary](#step-1c--download-standalone-binary)** | Native download — [Google Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing) |
+| **[pip install from source](#step-1b--install-from-source)** | Developing code-agent itself |
+
+---
+
+## Step 1 — Pull the container image (recommended)
 
 `code-agent` is published on **GitHub Container Registry**:
 
@@ -279,7 +347,82 @@ Use `latest` for newest; use `sha-…` or `@sha256:…` to pin.
 
 ---
 
-## Step 1b — Install from source {#step-1b-source}
+## Step 1c — Download standalone binary
+
+**Easiest download (Google Drive):**  
+[Kramlipi-code-agent binaries](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing)
+
+Folders: `linux/` · `macos/` · `windows/`
+
+Also published as **GitHub Release** assets on this docs repo:
+
+**[github.com/kramlipi/kramlipi.github.io/releases](https://github.com/kramlipi/kramlipi.github.io/releases)**
+
+Release tags look like `code-agent-v0.1.0`. Assets:
+
+| Platform | File |
+|----------|------|
+| Linux | `code-agent-v0.1.0-linux` |
+| macOS | `code-agent-v0.1.0-macos` |
+| Windows | `code-agent-v0.1.0-windows.exe` |
+
+=== "Linux"
+
+    ```bash
+    # From Google Drive: download linux/code-agent, then:
+    chmod +x code-agent
+    ./code-agent doctor --provider-test
+    ```
+
+    Or from GitHub Releases:
+
+    ```bash
+    curl -fsSL -o code-agent \
+      https://github.com/kramlipi/kramlipi.github.io/releases/download/code-agent-v0.1.0/code-agent-v0.1.0-linux
+    chmod +x code-agent
+    ./code-agent doctor --provider-test
+    ```
+
+=== "macOS"
+
+    ```bash
+    # From Google Drive: download macos/code-agent, then:
+    chmod +x code-agent
+    ./code-agent doctor --provider-test
+    ```
+
+    Or from GitHub Releases:
+
+    ```bash
+    curl -fsSL -o code-agent \
+      https://github.com/kramlipi/kramlipi.github.io/releases/download/code-agent-v0.1.0/code-agent-v0.1.0-macos
+    chmod +x code-agent
+    ./code-agent doctor --provider-test
+    ```
+
+=== "Windows (PowerShell)"
+
+    ```powershell
+    # From Google Drive: download windows/code-agent.exe, then:
+    .\code-agent.exe doctor --provider-test
+    ```
+
+    Or from GitHub Releases:
+
+    ```powershell
+    Invoke-WebRequest -Uri "https://github.com/kramlipi/kramlipi.github.io/releases/download/code-agent-v0.1.0/code-agent-v0.1.0-windows.exe" `
+      -OutFile "code-agent.exe"
+    .\code-agent.exe doctor --provider-test
+    ```
+
+!!! note "ripgrep"
+    Standalone binaries still need [`rg`](https://github.com/BurntSushi/ripgrep) on your PATH for code search.
+
+Set `GEMINI_API_KEY` / `CODE_AGENT_MODEL` the same way as in [Set provider API keys](#set-provider-api-keys) above, then continue with [Step 2](#step-2--first-command).
+
+---
+
+## Step 1b — Install from source
 
 `code-agent` is installed as a **CLI command** when you `pip install` the project (it is not a separate download).
 
@@ -303,7 +446,7 @@ cp config.example.yaml config.yaml
 
 ```bash
 which code-agent
-code-agent --version    # or: code-agent -V
+code-agent --version
 ```
 
 **Expected:**
@@ -313,15 +456,6 @@ code-agent --version    # or: code-agent -V
 ```
 
 If `which code-agent` prints nothing → run `source .venv/bin/activate` again.
-
-**Optional — tab completion** (expert ids, `--verify-cmd`, subcommands):
-
-```bash
-code-agent --install-completion
-# new shell, then: code-agent experts run <TAB>
-```
-
-Full details: [Commands → Help & tab completion](commands.md#help-tab-completion).
 
 **Also install ripgrep** (required for code search):
 
