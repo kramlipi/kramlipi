@@ -1,8 +1,16 @@
 # Release notes
 
 **Product:** kramlipi code-agent  
-**Binaries:** [GitHub Releases](https://github.com/kramlipi/kramlipi.github.io/releases)  
+**Binaries:** [GitHub Releases](https://github.com/kramlipi/kramlipi.github.io/releases) (binaries only — no product source)  
 **Contact:** cluevion@gmail.com
+
+---
+
+## Distribution policy
+
+- **Public:** docs site + **binary** assets on GitHub Releases / Drive  
+- **Private:** product source (`code-agent` implementation)  
+- Never attach `.py`, source zips, or repo trees to Releases — only `code-agent-*-linux`, `*-windows.exe`, `*-macos`
 
 ---
 
