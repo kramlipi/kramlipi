@@ -25,7 +25,7 @@ This agent fixes that in the **CI pipeline**.
 
 Download Linux / macOS / Windows:
 
-**[Google Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing)** · **[GitHub Releases](https://github.com/kramlipi/kramlipi.github.io/releases)**
+**[Google Drive](https://drive.google.com/drive/folders/11iuNWM13SjrlKastaA_2FaMz4tGg9_QX?usp=sharing)** · **[GitHub Releases](https://github.com/kramlipi/kramlipi.github.io/releases)** · **[Release notes](release-notes.md)**
 
 ```bash
 chmod +x code-agent   # Linux / macOS
