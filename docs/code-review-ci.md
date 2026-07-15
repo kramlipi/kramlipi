@@ -1,11 +1,6 @@
 ---
 title: Add code-review to CI
-description: >-
-  Copy-paste GitHub Actions, GitLab CI, and Azure Pipelines to run kramlipi
-  code-review on every PR/MR. Downloads the Linux binary from Releases.
-keywords: >-
-  code review CI, GitHub Actions code review, GitLab CI review, Azure DevOps
-  PR review, kramlipi code-agent
+description: Copy-paste GitHub Actions, GitLab CI, and Azure Pipelines for kramlipi code-review.
 ---
 
 # Add code-review agent to CI (copy-paste)
@@ -56,9 +51,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install ripgrep
-        run: sudo apt-get update && sudo apt-get install -y ripgrep
-
       - name: Download code-agent (Linux)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -73,6 +65,7 @@ jobs:
             --dir /tmp
           install -m 755 "/tmp/code-agent-${VER}-linux" /usr/local/bin/code-agent
           code-agent --help | head -5
+          # ripgrep is bundled in the binary (v0.1.3+)
 
       - name: Review PR (inline comments)
         env:
@@ -123,7 +116,7 @@ code-review:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   before_script:
-    - apt-get update -qq && apt-get install -y -qq curl ca-certificates git ripgrep
+    - apt-get update -qq && apt-get install -y -qq curl ca-certificates git
     - |
       set -euo pipefail
       TAG=$(curl -fsSL \
@@ -133,6 +126,7 @@ code-review:
       curl -fsSL -o /usr/local/bin/code-agent \
         "https://github.com/kramlipi/code-agent-binaries/releases/download/${TAG}/code-agent-${VER}-linux"
       chmod +x /usr/local/bin/code-agent
+      # ripgrep is bundled in the binary (v0.1.3+)
   script:
     - git fetch origin "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}" --depth=50 || true
     - git diff "origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}...HEAD" > /tmp/mr.diff
@@ -165,7 +159,7 @@ Install [`glab`](https://gitlab.com/gitlab-org/cli) in `before_script` if you wa
 
 ## Azure DevOps — copy-paste
 
-Save as `azure-pipelines-code-review.yml` (same content as [`ci/azure-pipelines-code-review.yml`](code-review-ci.md#azure-devops--copy-paste)).
+Save as `azure-pipelines-code-review.yml` (same content as [`ci/azure-pipelines-code-review.yml`](../ci/azure-pipelines-code-review.yml)).
 
 **Pipeline variables / variable group:** `GEMINI_API_KEY` (secret).
 
@@ -186,7 +180,7 @@ steps:
 
   - bash: |
       set -euo pipefail
-      sudo apt-get update -qq && sudo apt-get install -y -qq ripgrep curl ca-certificates
+      sudo apt-get update -qq && sudo apt-get install -y -qq curl ca-certificates
       TAG=$(curl -fsSL \
         "https://api.github.com/repos/kramlipi/code-agent-binaries/releases/latest" \
         | sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' | head -1)
@@ -241,4 +235,4 @@ code-agent experts run code-review --diff-file /tmp/mr.diff -w .
 
 - Product templates: `.github/workflows/code-review-template.yml`
 - Expert flags: [TASKS-AND-EXPERTS.md](./TASKS-AND-EXPERTS.md#5-expert-code-review)
-- Quick start: [QUICKSTART.md](quick-start.md)
+- Quick start: [QUICKSTART.md](./QUICKSTART.md)

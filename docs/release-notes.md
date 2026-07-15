@@ -77,6 +77,12 @@ More: [Get started](get-started.md) · [Commands](commands.md)
 
 ---
 
+## 0.1.3
+
+- **ripgrep (`rg`) bundled** in the binary — no separate install
+- Economy mode off by default; code-review CI (GitHub / GitLab / Azure)
+- `--diff-file` for non-GitHub MR diffs
+
 ## 0.1.2
 
 - **Economy mode off by default** — full quality; opt in with `CODE_AGENT_ECONOMY_MODE=true`
