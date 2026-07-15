@@ -159,7 +159,7 @@ Install [`glab`](https://gitlab.com/gitlab-org/cli) in `before_script` if you wa
 
 ## Azure DevOps — copy-paste
 
-Save as `azure-pipelines-code-review.yml` (same content as [`ci/azure-pipelines-code-review.yml`](../ci/azure-pipelines-code-review.yml)).
+Save as `azure-pipelines-code-review.yml` (copy-paste block below).
 
 **Pipeline variables / variable group:** `GEMINI_API_KEY` (secret).
 
@@ -234,5 +234,5 @@ code-agent experts run code-review --diff-file /tmp/mr.diff -w .
 ## Related
 
 - Product templates: `.github/workflows/code-review-template.yml`
-- Expert flags: [TASKS-AND-EXPERTS.md](./TASKS-AND-EXPERTS.md#5-expert-code-review)
-- Quick start: [QUICKSTART.md](./QUICKSTART.md)
+- Expert flags: [Experts](experts.md)
+- Quick start: [Quick Start](quick-start.md)

@@ -58,7 +58,7 @@ export OPENAI_API_KEY=YOUR_SECRET_KEY
 
 #### Cursor?
 
-No public Cursor model API for `code-agent` — use Gemini / Claude / OpenAI. Full list: [Quick Start](quick-start.md#2-env-pick-a-model--api-key).
+No public Cursor model API for `code-agent` — use Gemini / Claude / OpenAI. Full list: [Quick Start](quick-start.md#2-env-pick-a-model-api-key).
 
 ## 3. What do you want to do?
 

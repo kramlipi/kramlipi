@@ -1,11 +1,11 @@
 ---
 title: Quick Start
 description: >-
-  Download the code-agent binary first, set GEMINI_API_KEY, then increase
-  coverage, fix broken builds, or post PR line reviews. Docker is optional.
+  Download the code-agent binary, set Gemini / Claude / OpenAI API keys, then
+  increase coverage, fix broken builds, or post PR line reviews.
 keywords: >-
-  install code-agent, binary download, increase coverage, fix broken CI,
-  PR code review, GEMINI_API_KEY, verify-cmd, Docker GHCR
+  install code-agent, GEMINI_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY,
+  Claude, Gemini, binary download, verify-cmd, Docker GHCR
 ---
 
 # Quick Start
@@ -256,15 +256,19 @@ View packages: [github.com/kramlipi → Packages](https://github.com/kramlipi?ta
 
 ### Set provider API keys
 
-Use **separate variables per provider**:
+Use **separate variables per provider** (same as [§2 ENV](#2-env-pick-a-model-api-key) above):
 
 | Provider | Variables |
 |----------|-----------|
 | **Gemini** | `CODE_AGENT_MODEL=gemini/gemini-2.0-flash` + `GEMINI_API_KEY` |
+| **Claude** | `CODE_AGENT_MODEL=anthropic/claude-sonnet-4-20250514` + `ANTHROPIC_API_KEY` |
 | **OpenAI** | `CODE_AGENT_MODEL=openai/gpt-4o` + `OPENAI_API_KEY` |
-| **Anthropic** | `CODE_AGENT_MODEL=anthropic/claude-3-5-sonnet-20241022` + `ANTHROPIC_API_KEY` |
 | **DeepSeek** | `CODE_AGENT_MODEL=deepseek/deepseek-chat` + `DEEPSEEK_API_KEY` |
-| **Proxy** | `CODE_AGENT_MODEL=openai/gpt-4o` + `CODE_AGENT_API_BASE` + `CODE_AGENT_API_KEY` |
+| **OpenRouter** | `CODE_AGENT_MODEL=openrouter/…` + `OPENROUTER_API_KEY` |
+| **Proxy** | `CODE_AGENT_MODEL=openai/…` + `CODE_AGENT_API_BASE` + `CODE_AGENT_API_KEY` |
+
+!!! note "Cursor"
+    Cursor has **no public chat API** for `code-agent`. Use Gemini, Claude, or OpenAI keys.
 
 === "Gemini (Linux / macOS / WSL)"
 
@@ -273,11 +277,11 @@ Use **separate variables per provider**:
     export GEMINI_API_KEY="your-key"
     ```
 
-=== "Gemini (Windows PowerShell)"
+=== "Claude"
 
-    ```powershell
-    $env:CODE_AGENT_MODEL = "gemini/gemini-2.0-flash"
-    $env:GEMINI_API_KEY = "your-key"
+    ```bash
+    export CODE_AGENT_MODEL=anthropic/claude-sonnet-4-20250514
+    export ANTHROPIC_API_KEY="your-key"
     ```
 
 === "OpenAI"
@@ -285,6 +289,13 @@ Use **separate variables per provider**:
     ```bash
     export CODE_AGENT_MODEL=openai/gpt-4o
     export OPENAI_API_KEY="your-key"
+    ```
+
+=== "Gemini (Windows PowerShell)"
+
+    ```powershell
+    $env:CODE_AGENT_MODEL = "gemini/gemini-2.0-flash"
+    $env:GEMINI_API_KEY = "your-key"
     ```
 
 === "Proxy / OpenAI-compatible"
