@@ -36,22 +36,77 @@ Windows: download `code-agent.exe` → `.\code-agent.exe doctor --provider-test`
 
 More binary detail: [Step 1c — Download standalone binary](#step-1c--download-standalone-binary)
 
-### 2. ENV (Gemini)
+### 2. ENV (pick a model + API key)
 
-Get a key from [Google AI Studio](https://aistudio.google.com/).
+Set **`CODE_AGENT_MODEL`** (LiteLLM string) and the matching provider key.
+
+#### Gemini (default / recommended)
+
+Key from [Google AI Studio](https://aistudio.google.com/):
 
 ```bash
 export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
+# also fine: gemini/gemini-3.1-flash-lite
 export GEMINI_API_KEY=YOUR_SECRET_KEY
+# aliases: GOOGLE_API_KEY · Windows user env geminikey
 ```
 
-| Variable | Meaning |
-|----------|---------|
-| `CODE_AGENT_MODEL` | Which LLM to use |
-| `GEMINI_API_KEY` | Your Gemini API key |
+#### Claude (Anthropic)
+
+Key from [Anthropic Console](https://console.anthropic.com/):
+
+```bash
+export CODE_AGENT_MODEL=anthropic/claude-sonnet-4-20250514
+# or: anthropic/claude-3-5-haiku-latest
+export ANTHROPIC_API_KEY=YOUR_SECRET_KEY
+```
+
+#### OpenAI
+
+Key from [OpenAI API keys](https://platform.openai.com/api-keys):
+
+```bash
+export CODE_AGENT_MODEL=openai/gpt-4o
+export OPENAI_API_KEY=YOUR_SECRET_KEY
+```
+
+#### Cursor?
+
+**Cursor does not expose a public chat API** for third-party CLIs like `code-agent`.  
+Use **Gemini, Claude, or OpenAI** with kramlipi; keep Cursor as your editor.  
+OpenRouter / OpenAI-compatible proxies work (see table below).
+
+#### Env reference
+
+| Variable | When | Get key |
+|----------|------|---------|
+| `CODE_AGENT_MODEL` | Always | LiteLLM model string |
+| `GEMINI_API_KEY` / `GOOGLE_API_KEY` | `gemini/…` | [AI Studio](https://aistudio.google.com/) |
+| `ANTHROPIC_API_KEY` | `anthropic/…` | [Anthropic](https://console.anthropic.com/) |
+| `OPENAI_API_KEY` | `openai/…` | [OpenAI](https://platform.openai.com/api-keys) |
+| `DEEPSEEK_API_KEY` | `deepseek/…` | DeepSeek |
+| `OPENROUTER_API_KEY` | `openrouter/…` | [OpenRouter](https://openrouter.ai/) |
+| `CODE_AGENT_API_BASE` | Custom / local proxy | Your `/v1` URL |
+| `CODE_AGENT_API_KEY` | Custom base | Proxy key |
+| `CODE_AGENT_ECONOMY_MODE` | Optional | `true` to save cost (default **off**) |
+
+```bash
+# DeepSeek
+export CODE_AGENT_MODEL=deepseek/deepseek-chat
+export DEEPSEEK_API_KEY=YOUR_SECRET_KEY
+
+# OpenRouter
+export CODE_AGENT_MODEL=openrouter/anthropic/claude-3.5-sonnet
+export OPENROUTER_API_KEY=YOUR_SECRET_KEY
+
+# OpenAI-compatible proxy
+export CODE_AGENT_MODEL=openai/my-model
+export CODE_AGENT_API_BASE=https://your-proxy.example/v1
+export CODE_AGENT_API_KEY=YOUR_PROXY_KEY
+```
 
 !!! tip "Model string"
-    Prefer the LiteLLM form `gemini/gemini-2.0-flash`.
+    Always use the LiteLLM form: `gemini/…`, `anthropic/…`, `openai/…`.
 
 ### 3. By use case — what do you want to do?
 

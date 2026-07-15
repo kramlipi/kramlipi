@@ -29,14 +29,38 @@ Also: [GitHub Releases](https://github.com/kramlipi/code-agent-binaries/releases
 chmod +x code-agent   # Linux / macOS
 ```
 
-## 2. ENV (Gemini)
+## 2. ENV (pick a model + API key)
 
-Key from [Google AI Studio](https://aistudio.google.com/):
+#### Gemini
 
 ```bash
 export CODE_AGENT_MODEL=gemini/gemini-2.0-flash
 export GEMINI_API_KEY=YOUR_SECRET_KEY
 ```
+
+Key: [Google AI Studio](https://aistudio.google.com/)
+
+#### Claude
+
+```bash
+export CODE_AGENT_MODEL=anthropic/claude-sonnet-4-20250514
+export ANTHROPIC_API_KEY=YOUR_SECRET_KEY
+```
+
+Key: [Anthropic Console](https://console.anthropic.com/)
+
+#### OpenAI
+
+```bash
+export CODE_AGENT_MODEL=openai/gpt-4o
+export OPENAI_API_KEY=YOUR_SECRET_KEY
+```
+
+#### Cursor?
+
+No public Cursor model API for `code-agent` — use Gemini / Claude / OpenAI. Full list: [Quick Start](quick-start.md#2-env-pick-a-model--api-key).
+
+## 3. What do you want to do?
 
 ## 3. What do you want to do?
 
