@@ -18,7 +18,9 @@ keywords: python pytest, failing unit test, code-agent bug-fix, verify-cmd
 
 End-to-end below: **create a failing test → fix with code-agent**.
 
-Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md)
+**Full narrative tutorial:** [Fix Failing Python Tests Until pytest Is Green](../articles/tutorial-python-failing-tests.md)
+
+Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md) · [All tutorials](../articles/index.md)
 
 ---
 

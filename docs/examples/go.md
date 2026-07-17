@@ -18,7 +18,9 @@ keywords: golang go test, failing unit test, code-agent bug-fix
 
 Go projects use **`go test`**, not `pytest`. Always set `--verify-cmd "go test ..."`.
 
-Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md)
+**Full narrative tutorial:** [Fix Failing Go Tests Until `go test` Is Green](../articles/tutorial-go-failing-tests.md)
+
+Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md) · [All tutorials](../articles/index.md)
 
 ---
 

@@ -137,6 +137,7 @@ Image: `ghcr.io/kramlipi/code-agent:latest` · [GHCR packages](https://github.co
 | [Get started](get-started.md) | Binary first, use cases, pricing, how to run |
 | [Quick Start](quick-start.md) | Install paths, flags, container mapping |
 | [Use cases](use-cases.md) | Pain → command → benefit |
+| [Tutorials](articles/index.md) | Engaging walkthroughs (Python / Go / Java / coverage / review) |
 | [Pains](pains.md) | Full pain catalog |
 | [Commands](commands.md) | Every CLI flag |
 | [Experts](experts.md) | bug-fix, code-review, test-intel, … |

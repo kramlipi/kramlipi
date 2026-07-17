@@ -18,7 +18,9 @@ keywords: java junit, maven test, gradle test, code-agent failing unit test
 
 Java uses **JUnit** + **Maven** or **Gradle**. Set `--verify-cmd` to match your build tool.
 
-Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md)
+**Full narrative tutorial:** [Fix Failing Java Tests Until Maven/Gradle Is Green](../articles/tutorial-java-failing-tests.md)
+
+Home quick start (binary first): [Get started](../get-started.md) · [Use cases](../use-cases.md) · [All tutorials](../articles/index.md)
 
 !!! info "Parser note"
     Dedicated Java/JUnit log parser is limited — `bug-fix` uses **generic error parsing** plus the agent reading test output. **`--verify-cmd` is critical** so the agent proves `mvn test` or `./gradlew test` passes.
