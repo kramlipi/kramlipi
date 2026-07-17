@@ -192,6 +192,20 @@ Economy mode is **off by default**. Opt in: `CODE_AGENT_ECONOMY_MODE=true`.
 | `-w` / `--workspace` | Folder path of the git repo to edit |
 | `--verify-cmd` | Shell command that must exit `0` |
 
+#### Ultra intelligence (missing Go / toolchain)
+
+Default mode does **not** install Go. On a **trusted** host, opt in:
+
+```bash
+code-agent run "Make Go unit tests pass. Minimal changes." \
+  --verify-cmd "go test ./..." \
+  --autonomy cascade \
+  --approve-privileged \
+  -w /path/to/go-project
+```
+
+Full demo + why this is opt-in: **[Ultra intelligence mode](ultra-intelligence.md)**
+
 ### 4. Docker (optional — second choice)
 
 ```bash

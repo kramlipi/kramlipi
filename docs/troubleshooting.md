@@ -115,6 +115,25 @@ Always set:
 
 ---
 
+## `go: command not found` — agent did not install Go
+
+**Symptom:** `--verify-cmd "go test ./..."` fails; agent does not download Go.
+
+**Why:** Default autonomy (`aal`) never installs OS/language toolchains. That is intentional.
+
+**Fix (trusted host only — ultra intelligence):**
+
+```bash
+code-agent run "Make Go tests pass." \
+  --verify-cmd "go test ./..." \
+  --autonomy cascade --approve-privileged \
+  -w /path/to/go-repo
+```
+
+Or install Go yourself, then re-run without cascade. Details: [Ultra intelligence mode](ultra-intelligence.md).
+
+---
+
 ## Get help
 
 - Artifacts: `.code-agent/runs/<run_id>/`
